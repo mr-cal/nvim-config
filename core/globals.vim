@@ -1,12 +1,6 @@
-"{ Global Variable
-"{{ Custom variables
-let g:is_win = (has('win32') || has('win64')) ? v:true : v:false
-let g:is_linux = (has('unix') && !has('macunix')) ? v:true : v:false
-let g:is_mac = has('macunix') ? v:true : v:false
-let g:logging_level = 'info'
-"}}
-
 "{{ Builtin variables
+let g:logging_level = 'info'
+
 " Disable perl provider
 let g:loaded_perl_provider = 0
 
@@ -18,14 +12,9 @@ let g:loaded_node_provider = 0
 
 let g:did_install_default_menus = 1  " do not load menu
 
-" Path to Python 3 interpreter (must be an absolute path), make startup
-" faster. See https://neovim.io/doc/user/provider.html.
-if executable('python')
-   if g:is_win
-    let g:python3_host_prog=substitute(exepath('python'), '.exe$', '', 'g')
-  elseif g:is_linux || g:is_mac
-    let g:python3_host_prog=exepath('python')
-  endif
+" Path to Python 3 interpreter (must be an absolute path), make startup faster. See https://neovim.io/doc/user/provider.html.
+if executable('/home/developer/.venv/nvim/bin/python3')
+  let g:python3_host_prog=exepath('/home/developer/.venv/nvim/bin/python3')
 else
   echoerr 'Python 3 executable not found! You must install Python 3 and set its PATH correctly!'
 endif
@@ -50,9 +39,6 @@ let g:did_load_filetypes = 0
 let g:loaded_netrw       = 1
 let g:loaded_netrwPlugin = 1
 let g:netrw_liststyle = 3
-if g:is_win
-  let g:netrw_http_cmd = 'curl --ssl-no-revoke -Lo'
-endif
 
 " Do not load tohtml.vim
 let g:loaded_2html_plugin = 1

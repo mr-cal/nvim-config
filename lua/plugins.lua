@@ -33,28 +33,17 @@ require("packer").startup({
     use {"hrsh7th/cmp-nvim-lua", after = "nvim-cmp"}
     use {"hrsh7th/cmp-path", after = "nvim-cmp"}
     use {"hrsh7th/cmp-buffer", after = "nvim-cmp"}
-    use { "hrsh7th/cmp-omni", after = "nvim-cmp" }
-
     -- use {"hrsh7th/cmp-cmdline", after = "nvim-cmp"}
     use {"quangnguyen30192/cmp-nvim-ultisnips", after = {'nvim-cmp', 'ultisnips'}}
-    if vim.g.is_mac then
-      use {"hrsh7th/cmp-emoji", after = 'nvim-cmp'}
-    end
 
     -- nvim-lsp configuration (it relies on cmp-nvim-lsp, so it should be loaded after cmp-nvim-lsp).
     use({ "neovim/nvim-lspconfig", after = "cmp-nvim-lsp", config = [[require('config.lsp')]] })
-
-    if vim.g.is_mac then
-      use({ "nvim-treesitter/nvim-treesitter", event = 'BufEnter', run = ":TSUpdate", config = [[require('config.treesitter')]] })
-    end
 
     -- Python indent (follows the PEP8 style)
     use({ "Vimjas/vim-python-pep8-indent", ft = { "python" } })
 
     -- Python-related text object
     use({ "jeetsukumaran/vim-pythonsense", ft = { "python" } })
-
-    use({"machakann/vim-swap", event = "VimEnter"})
 
     -- IDE for Lisp
     if utils.executable("sbcl") then
@@ -99,26 +88,8 @@ require("packer").startup({
     -- search emoji and other symbols
     use {'nvim-telescope/telescope-symbols.nvim', after = 'telescope.nvim'}
 
-    -- Another similar plugin is command-t
-    -- use 'wincent/command-t'
-
-    -- Another grep tool (similar to Sublime Text Ctrl+Shift+F)
-    -- use 'dyng/ctrlsf.vim'
-
-    -- A grepping tool
-    -- use {'mhinz/vim-grepper', cmd = {'Grepper', '<plug>(GrepperOperator)'}}
-
-    -- A list of colorscheme plugin you may want to try. Find what suits you.
+    -- colorscheme / themes
     use({"lifepillar/vim-gruvbox8", opt = true})
-    use({"navarasu/onedark.nvim", opt = true})
-    use({"sainnhe/edge", opt = true})
-    use({"sainnhe/sonokai", opt = true})
-    use({"sainnhe/gruvbox-material", opt = true})
-    use({"shaunsingh/nord.nvim", opt = true})
-    use({"NTBBloodbath/doom-one.nvim", opt = true})
-    use({"sainnhe/everforest", opt = true})
-    use({"EdenEast/nightfox.nvim", opt = true})
-    use({"rebelot/kanagawa.nvim", opt = true})
 
     -- Show git change (change, delete, add) signs in vim sign column
     use({"mhinz/vim-signify", event = 'BufEnter'})
@@ -127,6 +98,7 @@ require("packer").startup({
 
     use {'kyazdani42/nvim-web-devicons', event = 'VimEnter'}
 
+    -- footer/bottom bar (like vim-airline)
     use {
       'nvim-lualine/lualine.nvim',
       event = 'VimEnter',
@@ -155,13 +127,6 @@ require("packer").startup({
         vim.defer_fn(function() require('config.nvim-notify') end, 2000)
       end
     })
-
-    -- For Windows and Mac, we can open an URL in the browser. For Linux, it may
-    -- not be possible since we maybe in a server which disables GUI.
-    if vim.g.is_win or vim.g.is_mac then
-      -- open URL in browser
-      use({"tyru/open-browser.vim", event = "VimEnter"})
-    end
 
     -- Only install these plugins if ctags are installed on the system
     if utils.executable("ctags") then
@@ -194,11 +159,6 @@ require("packer").startup({
     -- Show undo history visually
     use({"simnalamburt/vim-mundo", cmd = {"MundoToggle", "MundoShow"}})
 
-    -- Manage your yank history
-    if vim.g.is_win or vim.g.is_mac then
-      use({"svermeulen/vim-yoink", event = "VimEnter"})
-    end
-
     -- Handy unix command inside Vim (Rename, Move etc.)
     use({"tpope/vim-eunuch", cmd = {"Rename", "Delete"}})
 
@@ -208,12 +168,6 @@ require("packer").startup({
     -- Show the content of register in preview window
     -- Plug 'junegunn/vim-peekaboo'
     use({ "jdhao/better-escape.vim", event = { "InsertEnter" } })
-
-    if vim.g.is_mac then
-      use({ "lyokha/vim-xkbswitch", event = { "InsertEnter" } })
-    elseif vim.g.is_win then
-      use({ "Neur1n/neuims", event = { "InsertEnter" } })
-    end
 
     -- Syntax check and make
     -- use 'neomake/neomake'
@@ -247,22 +201,7 @@ require("packer").startup({
     -- Markdown JSON header highlight plugin
     use({ "elzr/vim-json", ft = { "json", "markdown" } })
 
-    -- Markdown previewing (only for Mac and Windows)
-    if vim.g.is_win or vim.g.is_mac then
-      use({
-        "iamcco/markdown-preview.nvim",
-        run = function()
-          fn["mkdp#util#install"]()
-        end,
-        ft = { "markdown" },
-      })
-    end
-
     use({'folke/zen-mode.nvim', cmd = 'ZenMode', config = [[require('config.zen-mode')]]})
-
-    if vim.g.is_mac then
-      use({ "rhysd/vim-grammarous", ft = { "markdown" } })
-    end
 
     use({"chrisbra/unicode.vim", event = "VimEnter"})
 
@@ -277,16 +216,6 @@ require("packer").startup({
     -- Add indent object for vim (useful for languages like Python)
     use({"michaeljsmith/vim-indent-object", event = "VimEnter"})
 
-    -- Only use these plugin on Windows and Mac and when LaTeX is installed
-    if vim.g.is_win or vim.g.is_mac and utils.executable("latex") then
-      use({ "lervag/vimtex", ft = { "tex" } })
-
-      -- use {'matze/vim-tex-fold', ft = {'tex', }}
-      -- use 'Konfekt/FastFold'
-    end
-
-    -- Since tmux is only available on Linux and Mac, we only enable these plugins
-    -- for Linux and Mac
     if utils.executable("tmux") then
       -- .tmux.conf syntax highlighting and setting check
       use({ "tmux-plugins/vim-tmux", ft = { "tmux" } })
@@ -314,27 +243,13 @@ require("packer").startup({
 
     use({ "cespare/vim-toml", ft = { "toml" }, branch = "main" })
 
-    -- Edit text area in browser using nvim
-    if vim.g.is_win or vim.g.is_mac then
-      use({
-        "glacambre/firenvim",
-        run = function() fn["firenvim#install"](0) end,
-        opt = true,
-        setup = [[vim.cmd('packadd firenvim')]],
-      })
-    end
-
     -- Debugger plugin
-    if vim.g.is_win or vim.g.is_linux then
-      use({ "sakhnik/nvim-gdb", run = { "bash install.sh" }, opt = true, setup = [[vim.cmd('packadd nvim-gdb')]] })
-    end
+    use({ "sakhnik/nvim-gdb", run = { "bash install.sh" }, opt = true, setup = [[vim.cmd('packadd nvim-gdb')]] })
 
     -- Session management plugin
     use({"tpope/vim-obsession", cmd = 'Obsession'})
 
-    if vim.g.is_linux then
-      use({"ojroques/vim-oscyank", cmd = {'OSCYank', 'OSCYankReg'}})
-    end
+    use({"ojroques/vim-oscyank", cmd = {'OSCYank', 'OSCYankReg'}})
 
     -- The missing auto-completion for cmdline!
     use({"gelguy/wilder.nvim", opt = true, setup = [[vim.cmd('packadd wilder.nvim')]]})
@@ -346,9 +261,6 @@ require("packer").startup({
       vim.defer_fn(function() require('config.which-key') end, 2000)
     end
     }
-
-    -- show and trim trailing whitespaces
-    use {'jdhao/whitespace.nvim', event = 'VimEnter'}
 
     -- file explorer
     use {

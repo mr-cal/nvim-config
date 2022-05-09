@@ -10,66 +10,11 @@ function! s:theme_setup_dict.gruvbox8() dict abort
   colorscheme gruvbox8_hard
 endfunction
 
-function! s:theme_setup_dict.onedark() dict abort
-  colorscheme onedark
-endfunction
+let s:gruvbox_name = 'gruvbox8'
+let s:gruvbox_repo = 'vim-gruvbox8'
 
-function! s:theme_setup_dict.edge() dict abort
-  let g:edge_enable_italic = 1
-  let g:edge_better_performance = 1
-  colorscheme edge
-endfunction
-
-function! s:theme_setup_dict.sonokai() dict abort
-  let g:sonokai_enable_italic = 1
-  let g:sonokai_better_performance = 1
-  colorscheme sonokai
-endfunction
-
-function! s:theme_setup_dict.gruvbox_material() dict abort
-  let g:gruvbox_material_enable_italic = 1
-  let g:gruvbox_material_better_performance = 1
-  colorscheme gruvbox-material
-endfunction
-
-function! s:theme_setup_dict.nord() dict abort
-  colorscheme nord
-endfunction
-
-function! s:theme_setup_dict.doom_one() dict abort
-  colorscheme doom-one
-endfunction
-
-function! s:theme_setup_dict.everforest() dict abort
-  let g:everforest_enable_italic = 1
-  let g:everforest_better_performance = 1
-  colorscheme everforest
-endfunction
-
-function! s:theme_setup_dict.nightfox() dict abort
-  colorscheme nordfox
-endfunction
-
-function! s:theme_setup_dict.kanagawa() dict abort
-  colorscheme kanagawa
-endfunction
-
-" Theme to directory name mapping, because theme repo name is not necessarily
-" the same as the theme name itself.
-let s:theme2dir = {
-      \ 'gruvbox8' : 'vim-gruvbox8',
-      \ 'onedark': 'onedark.nvim',
-      \ 'edge' : 'edge',
-      \ 'sonokai': 'sonokai',
-      \ 'gruvbox_material': 'gruvbox-material',
-      \ 'nord': 'nord.nvim',
-      \ 'doom_one': 'doom-one.nvim',
-      \ 'everforest' :'everforest',
-      \ 'nightfox': 'nightfox.nvim',
-      \ 'kanagawa': 'kanagawa.nvim',
-      \ }
-
-let s:theme = utils#RandElement(keys(s:theme2dir))
+let s:theme = s:gruvbox_name
+let s:theme_repo = s:gruvbox_repo
 let s:colorscheme_func = printf('s:theme_setup_dict.%s()', s:theme)
 
 if !has_key(s:theme_setup_dict, s:theme)
@@ -78,7 +23,7 @@ if !has_key(s:theme_setup_dict, s:theme)
   finish
 endif
 
-let s:status = utils#add_pack(s:theme2dir[s:theme])
+let s:status = utils#add_pack(s:theme_repo)
 if !s:status
   echomsg printf("Theme %s not installed. Run PackerSync to install.", s:theme)
   finish

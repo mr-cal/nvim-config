@@ -49,7 +49,10 @@ nnoremap <expr> <Space>o printf('m`%so<ESC>``', v:count1)
 nnoremap <expr> <Space>O printf('m`%sO<ESC>``', v:count1)
 
 " Insert a space after current character
-nnoremap <Space><Space> a<Space><ESC>h
+"nnoremap <Space><Space> a<Space><ESC>h
+
+" autosave by double tapping spacebar
+nnoremap <Space><Space> :<C-U>wa<CR>
 
 " Move the cursor based on physical lines, not the actual lines.
 nnoremap <expr> j (v:count == 0 ? 'gj' : 'j')
