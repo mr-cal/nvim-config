@@ -99,7 +99,7 @@ nnoremap <silent> <leader>sv :<C-U>silent update $MYVIMRC <bar> source $MYVIMRC 
 nnoremap <expr> <leader>v printf('`[%s`]', getregtype()[0])
 
 " Always use very magic mode for searching
-nnoremap / /\v
+"nnoremap / /\v
 
 " Search in selected region
 xnoremap / :<C-U>call feedkeys('/\%>'.(line("'<")-1).'l\%<'.(line("'>")+1)."l")<CR>
