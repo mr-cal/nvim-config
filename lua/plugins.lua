@@ -254,6 +254,8 @@ require("packer").startup({
     -- The missing auto-completion for cmdline!
     use({"gelguy/wilder.nvim", opt = true, setup = [[vim.cmd('packadd wilder.nvim')]]})
 
+    use({"Numkil/ag.nvim"})
+
     -- showing keybindings
     use {"folke/which-key.nvim",
     event = "VimEnter",
