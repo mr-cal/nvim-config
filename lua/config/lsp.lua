@@ -1,3 +1,4 @@
+local fn = vim.fn
 local api = vim.api
 local lsp = vim.lsp
 
@@ -30,7 +31,19 @@ local custom_attach = function(client, bufnr)
         source = 'always',  -- show source in diagnostic popup window
         prefix = ' '
       }
-      vim.diagnostic.open_float(nil, opts)
+
+      if not vim.b.diagnostics_pos then
+        vim.b.diagnostics_pos = { nil, nil }
+      end
+
+      local cursor_pos = vim.api.nvim_win_get_cursor(0)
+      if (cursor_pos[1] ~= vim.b.diagnostics_pos[1] or cursor_pos[2] ~= vim.b.diagnostics_pos[2]) and
+        #vim.diagnostic.get() > 0
+      then
+          vim.diagnostic.open_float(nil, opts)
+      end
+
+      vim.b.diagnostics_pos = cursor_pos
     end
   })
 
@@ -135,9 +148,9 @@ if utils.executable('bash-language-server') then
   })
 end
 
-local sumneko_binary_path = vim.fn.exepath("lua-language-server")
+local sumneko_binary_path = fn.exepath("lua-language-server")
 if sumneko_binary_path ~= "" then
-  local sumneko_root_path = vim.fn.fnamemodify(sumneko_binary_path, ":h:h:h")
+  local sumneko_root_path = fn.fnamemodify(sumneko_binary_path, ":h:h:h")
 
   local runtime_path = vim.split(package.path, ";")
   table.insert(runtime_path, "lua/?.lua")
@@ -173,10 +186,10 @@ if sumneko_binary_path ~= "" then
 end
 
 -- Change diagnostic signs.
-vim.fn.sign_define("DiagnosticSignError", { text = "✗", texthl = "DiagnosticSignError" })
-vim.fn.sign_define("DiagnosticSignWarn", { text = "!", texthl = "DiagnosticSignWarn" })
-vim.fn.sign_define("DiagnosticSignInformation", { text = "", texthl = "DiagnosticSignInfo" })
-vim.fn.sign_define("DiagnosticSignHint", { text = "", texthl = "DiagnosticSignHint" })
+fn.sign_define("DiagnosticSignError", { text = "✗", texthl = "DiagnosticSignError" })
+fn.sign_define("DiagnosticSignWarn", { text = "!", texthl = "DiagnosticSignWarn" })
+fn.sign_define("DiagnosticSignInformation", { text = "", texthl = "DiagnosticSignInfo" })
+fn.sign_define("DiagnosticSignHint", { text = "", texthl = "DiagnosticSignHint" })
 
 -- global config for diagnostic
 vim.diagnostic.config({

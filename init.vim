@@ -1,3 +1,7 @@
+if !has('nvim-0.7.0')
+  echohl Error | echomsg "Nvim 0.7.0 required, but is missing!" | echohl None
+  finish
+endif
 let s:core_conf_files = [
       \ 'globals.vim',
       \ 'options.vim',
