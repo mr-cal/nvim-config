@@ -128,11 +128,13 @@ require("packer").startup({
       end
     })
 
-    -- Only install these plugins if ctags are installed on the system
-    if utils.executable("ctags") then
-      -- show file tags in vim window
-      use({"liuchengxu/vista.vim", cmd = "Vista"})
-    end
+    ---- Only install these plugins if ctags are installed on the system
+    --if utils.executable("ctags") then
+    --  -- show file tags in vim window
+    --  use({"liuchengxu/vista.vim", cmd = "Vista"})
+    --end
+    -- show symbols/function/variable navigator
+    use({'simrat39/symbols-outline.nvim'})
 
     -- Snippet engine and snippet template
     use({"SirVer/ultisnips", event = 'InsertEnter'})
