@@ -135,3 +135,7 @@ augroup auto_create_dir
   autocmd!
   autocmd BufWritePre * lua require('utils').may_create_dir()
 augroup END
+
+augroup yaml_indents
+  autocmd FileType yaml setlocal indentkeys-=0#
+augroup END
