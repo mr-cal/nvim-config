@@ -1,7 +1,7 @@
 scriptencoding utf-8
 
 " Plugin specification and lua stuff
-lua require('lua-init')
+lua require('plugins')
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                      configurations for vim script plugin                  "
@@ -148,15 +148,6 @@ let g:signify_vcs_list = [ 'git' ]
 " Change the sign for certain operations
 let g:signify_sign_change = '~'
 
-"""""""""""""""""""""""""vim-fugitive settings""""""""""""""""""""""""""""""
-nnoremap <silent> <leader>gs :Git<CR>
-nnoremap <silent> <leader>gw :Gwrite<CR>
-nnoremap <silent> <leader>gc :Git commit<CR>
-nnoremap <silent> <leader>gd :Gdiffsplit<CR>
-nnoremap <silent> <leader>gpl :Git pull<CR>
-" Note that to use bar literally, we need backslash it, see also `:h :bar`.
-nnoremap <silent> <leader>gpu :15split \| term git push<CR>
-
 """""""""""""""""""""""""plasticboy/vim-markdown settings"""""""""""""""""""
 " Disable header folding
 let g:vim_markdown_folding_disabled = 1
@@ -227,9 +218,16 @@ if exists('g:started_by_firenvim') && g:started_by_firenvim
       \ }
   \ }
 
+  function! s:setup_firenvim() abort
+    set noruler noshowcmd
+    set laststatus=0 showtabline=0
+  endfunction
+
   augroup firenvim
     autocmd!
-    autocmd BufEnter *.txt setlocal filetype=markdown laststatus=0 nonumber noshowcmd noruler showtabline=1
+    autocmd FileType text call s:setup_firenvim()
+    autocmd BufNewFile github.com_*.txt set filetype=markdown
+    autocmd BufNewFile stackoverflow.com_*.txt set filetype=markdown
   augroup END
 endif
 
@@ -281,3 +279,6 @@ function! s:wilder_init() abort
     echohl Error |echomsg "Wilder.nvim missing: run :PackerSync to fix."|echohl None
   endtry
 endfunction
+
+""""""""""""""""""""""""""""""vim-auto-save settings""""""""""""""""""""""""""""""
+let g:auto_save = 1  " enable AutoSave on Vim startup

@@ -26,7 +26,9 @@ let g:mapleader = ','
 let g:vimsyn_embed = 'l'
 
 " Use English as main language
-language en_US.utf-8
+if !g:is_mac
+  language en_US.utf-8
+endif
 
 " use filetype.lua instead of filetype.vim
 let g:do_filetype_lua = 1
@@ -55,4 +57,7 @@ let g:loaded_tutor_mode_plugin = 1  " do not load the tutor plugin
 let g:loaded_matchit = 1
 let g:loaded_matchparen = 1
 "}}
+
+" Disable sql omni completion, it is broken.
+let g:loaded_sql_completion = 1
 "}

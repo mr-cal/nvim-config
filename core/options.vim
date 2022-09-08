@@ -112,6 +112,9 @@ set shortmess+=c
 " choice, IMHO.
 set shortmess+=S
 
+" Disable showing intro message (:intro)
+set shortmess+=I
+
 " Completion behaviour
 " set completeopt+=noinsert  " Auto select the first completion entry
 set completeopt+=menuone  " Show menu even if there is only one item
@@ -120,7 +123,7 @@ set completeopt-=preview  " Disable the preview window
 set pumheight=10  " Maximum number of items to show in popup menu
 set pumblend=10  " pseudo transparency for completion menu
 
-set winblend=5  " pseudo transparency for floating window
+set winblend=0  " pseudo transparency for floating window
 
 " Insert mode key word completion setting
 set complete+=kspell complete-=w complete-=b complete-=u complete-=t

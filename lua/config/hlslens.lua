@@ -1,3 +1,6 @@
+local api = vim.api
+local keymap = vim.keymap
+
 require('hlslens').setup({
     calm_down = true,
     nearest_only = true,
@@ -10,25 +13,23 @@ local activate_hlslens = function(direction)
   msg = msg:sub(13)
 
   if not status then
-    vim.api.nvim_echo({{msg, "ErrorMsg"}}, false, {})
+    api.nvim_err_writeln(msg)
     return
   end
   require('hlslens').start()
 end
 
-vim.keymap.set('n', 'n', '',
+keymap.set('n', 'n', '',
 {
-  noremap = true,
   silent = true,
   callback = function() activate_hlslens('n') end
 })
 
-vim.keymap.set('n', 'N', '',
+keymap.set('n', 'N', '',
 {
-  noremap = true,
   silent = true,
   callback = function() activate_hlslens('N') end
 })
 
-vim.keymap.set('n', '*', "<Plug>(asterisk-z*)<Cmd>lua require('hlslens').start()<CR>", { silent = true })
-vim.keymap.set('n', '#', "<Plug>(asterisk-z#)<Cmd>lua require('hlslens').start()<CR>", { silent = true })
+keymap.set('n', '*', "<Plug>(asterisk-z*)<Cmd>lua require('hlslens').start()<CR>", { silent = true })
+keymap.set('n', '#', "<Plug>(asterisk-z#)<Cmd>lua require('hlslens').start()<CR>", { silent = true })

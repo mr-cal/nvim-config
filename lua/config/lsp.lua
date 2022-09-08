@@ -1,5 +1,6 @@
 local fn = vim.fn
 local api = vim.api
+local keymap = vim.keymap
 local lsp = vim.lsp
 
 local utils = require("utils")
@@ -7,24 +8,32 @@ local utils = require("utils")
 local custom_attach = function(client, bufnr)
   -- Mappings.
   local opts = { silent = true, buffer = bufnr }
-  vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-  vim.keymap.set("n", "<C-]>", vim.lsp.buf.definition, opts)
-  vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-  vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts)
-  vim.keymap.set("n", "<space>wa", vim.lsp.buf.add_workspace_folder, opts)
-  vim.keymap.set("n", "<space>wr", vim.lsp.buf.remove_workspace_folder, opts)
-  vim.keymap.set("n", "<space>wl", function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end, opts)
-  vim.keymap.set("n", "<space>rn", vim.lsp.buf.rename, opts)
-  vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
-  vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
-  vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
-  vim.keymap.set("n", "<space>q", function() vim.diagnostic.setqflist({open = true}) end, opts)
-  vim.keymap.set("n", "<space>ca", vim.lsp.buf.code_action, opts)
+  keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+  keymap.set("n", "<C-]>", vim.lsp.buf.definition, opts)
+  keymap.set("n", "K", vim.lsp.buf.hover, opts)
+  keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts)
+  keymap.set("n", "<space>rn", vim.lsp.buf.rename, opts)
+  keymap.set("n", "gr", vim.lsp.buf.references, opts)
+  keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
+  keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
+  keymap.set("n", "<space>q", function() vim.diagnostic.setqflist({open = true}) end, opts)
+  keymap.set("n", "<space>ca", vim.lsp.buf.code_action, opts)
+  keymap.set("n", "<space>wa", vim.lsp.buf.add_workspace_folder, opts)
+  keymap.set("n", "<space>wr", vim.lsp.buf.remove_workspace_folder, opts)
+  keymap.set("n", "<space>wl", function() inspect(vim.lsp.buf.list_workspace_folders()) end, opts)
 
-  vim.api.nvim_create_autocmd("CursorHold", {
+  -- Set some key bindings conditional on server capabilities
+  if client.resolved_capabilities.document_formatting then
+    keymap.set("n", "<space>f", vim.lsp.buf.formatting_sync, opts)
+  end
+  if client.resolved_capabilities.document_range_formatting then
+    keymap.set("x", "<space>f", vim.lsp.buf.range_formatting, opts)
+  end
+
+  api.nvim_create_autocmd("CursorHold", {
     buffer=bufnr,
     callback = function()
-      local opts = {
+      local float_opts = {
         focusable = false,
         close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
         border = 'rounded',
@@ -36,24 +45,16 @@ local custom_attach = function(client, bufnr)
         vim.b.diagnostics_pos = { nil, nil }
       end
 
-      local cursor_pos = vim.api.nvim_win_get_cursor(0)
+      local cursor_pos = api.nvim_win_get_cursor(0)
       if (cursor_pos[1] ~= vim.b.diagnostics_pos[1] or cursor_pos[2] ~= vim.b.diagnostics_pos[2]) and
         #vim.diagnostic.get() > 0
       then
-          vim.diagnostic.open_float(nil, opts)
+          vim.diagnostic.open_float(nil, float_opts)
       end
 
       vim.b.diagnostics_pos = cursor_pos
     end
   })
-
-  -- Set some key bindings conditional on server capabilities
-  if client.resolved_capabilities.document_formatting then
-    vim.keymap.set("n", "<space>f", vim.lsp.buf.formatting_sync, opts)
-  end
-  if client.resolved_capabilities.document_range_formatting then
-    vim.keymap.set("x", "<space>f", vim.lsp.buf.range_formatting, opts)
-  end
 
   -- The blow command will highlight the current variable and its usages in the buffer.
   if client.resolved_capabilities.document_highlight then
@@ -71,7 +72,7 @@ local custom_attach = function(client, bufnr)
 
   if vim.g.logging_level == 'debug' then
     local msg = string.format("Language server %s started!", client.name)
-    vim.notify(msg, 'info', {title = 'Nvim-config'})
+    vim.notify(msg, vim.log.levels.DEBUG, {title = 'Nvim-config'})
   end
 end
 
@@ -102,7 +103,7 @@ if utils.executable('pylsp') then
     capabilities = capabilities,
   })
 else
-  vim.notify("pylsp not found!", 'warn', {title = 'Nvim-config'})
+  vim.notify("pylsp not found!", vim.log.levels.WARN, {title = 'Nvim-config'})
 end
 
 -- if utils.executable('pyright') then
@@ -111,7 +112,7 @@ end
 --     capabilities = capabilities
 --   }
 -- else
---   vim.notify("pyright not found!", 'warn', {title = 'Nvim-config'})
+--   vim.notify("pyright not found!", vim.log.levels.WARN, {title = 'Nvim-config'})
 -- end
 
 if utils.executable('clangd') then
@@ -124,7 +125,7 @@ if utils.executable('clangd') then
     },
   })
 else
-  vim.notify("clangd not found!", 'warn', {title = 'Nvim-config'})
+  vim.notify("clangd not found!", vim.log.levels.WARN, {title = 'Nvim-config'})
 end
 
 -- set up vim-language-server
@@ -137,7 +138,7 @@ if utils.executable('vim-language-server') then
     capabilities = capabilities,
   })
 else
-  vim.notify("vim-language-server not found!", 'warn', {title = 'Nvim-config'})
+  vim.notify("vim-language-server not found!", vim.log.levels.WARN, {title = 'Nvim-config'})
 end
 
 -- set up bash-language-server
@@ -148,36 +149,30 @@ if utils.executable('bash-language-server') then
   })
 end
 
-local sumneko_binary_path = fn.exepath("lua-language-server")
-if sumneko_binary_path ~= "" then
-  local sumneko_root_path = fn.fnamemodify(sumneko_binary_path, ":h:h:h")
-
-  local runtime_path = vim.split(package.path, ";")
-  table.insert(runtime_path, "lua/?.lua")
-  table.insert(runtime_path, "lua/?/init.lua")
-
+if utils.executable("lua-language-server") then
+  -- settings for lua-language-server can be found on https://github.com/sumneko/lua-language-server/wiki/Settings .
   lspconfig.sumneko_lua.setup({
     on_attach = custom_attach,
-    cmd = { sumneko_binary_path, "-E", sumneko_root_path .. "/main.lua" },
     settings = {
       Lua = {
         runtime = {
           -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
           version = "LuaJIT",
-          -- Setup your lua path
-          path = runtime_path,
         },
         diagnostics = {
           -- Get the language server to recognize the `vim` global
           globals = { "vim" },
         },
         workspace = {
-          -- Make the server aware of Neovim runtime files
-          library = api.nvim_get_runtime_file("", true),
-        },
-        -- Do not send telemetry data containing a randomized but unique identifier
-        telemetry = {
-          enable = false,
+          -- Make the server aware of Neovim runtime files,
+          -- see also https://github.com/sumneko/lua-language-server/wiki/Libraries#link-to-workspace .
+          -- Lua-dev.nvim also has similar settings for sumneko lua, https://github.com/folke/lua-dev.nvim/blob/main/lua/lua-dev/sumneko.lua .
+          library = {
+            fn.stdpath('data') .. "/site/pack/packer/opt/emmylua-nvim",
+            fn.stdpath('config'),
+          },
+          maxPreload = 2000,
+          preloadFileSize = 50000,
         },
       },
     },
