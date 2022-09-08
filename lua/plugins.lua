@@ -82,11 +82,7 @@ packer.startup({
     use({ "haya14busa/vim-asterisk", event = 'VimEnter' })
 
     -- File search, tag search and more
-    if vim.g.is_win then
-      use({ "Yggdroot/LeaderF", cmd = "Leaderf" })
-    else
-      use({ "Yggdroot/LeaderF", cmd = "Leaderf", run = ":LeaderfInstallCExtension" })
-    end
+    use({ "Yggdroot/LeaderF", cmd = "Leaderf", run = ":LeaderfInstallCExtension" })
 
     use {
       'nvim-telescope/telescope.nvim', cmd = 'Telescope',

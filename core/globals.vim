@@ -26,9 +26,7 @@ let g:mapleader = ','
 let g:vimsyn_embed = 'l'
 
 " Use English as main language
-if !g:is_mac
-  language en_US.utf-8
-endif
+language en_US.utf-8
 
 " use filetype.lua instead of filetype.vim
 let g:do_filetype_lua = 1

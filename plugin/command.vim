@@ -29,14 +29,6 @@ function! s:md_to_pdf() abort
         \ "-V linkcolor=red -V urlcolor=teal -V filecolor=magenta -s " .
         \ l:md_path . " -o " . l:pdf_path
 
-  if g:is_mac
-    let l:cmd = l:cmd . '&& open ' . l:pdf_path
-  endif
-
-  if g:is_win
-    let l:cmd = l:cmd . '&& start ' . l:pdf_path
-  endif
-
   " echomsg l:cmd
 
   let l:id = jobstart(l:cmd)
