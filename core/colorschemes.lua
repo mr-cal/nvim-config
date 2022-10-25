@@ -1,6 +1,6 @@
 --- This module will load a random colorscheme on nvim startup process.
 
-local utils = require('utils')
+local utils = require("utils")
 
 local M = {}
 
@@ -12,7 +12,7 @@ M.gruvbox8 = function()
   vim.g.gruvbox_filetype_hi_groups = 1
   vim.g.gruvbox_plugin_hi_groups = 1
 
-  vim.cmd [[colorscheme gruvbox8_hard]]
+  vim.cmd([[colorscheme gruvbox8_hard]])
 end
 
 local colorscheme = "gruvbox8"

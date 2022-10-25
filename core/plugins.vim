@@ -141,14 +141,7 @@ let g:neoformat_c_clangformat = {
 let g:neoformat_enabled_cpp = ['clangformat']
 let g:neoformat_enabled_c = ['clangformat']
 
-"""""""""""""""""""""""""vim-signify settings""""""""""""""""""""""""""""""
-" The VCS to use
-let g:signify_vcs_list = [ 'git' ]
-
-" Change the sign for certain operations
-let g:signify_sign_change = '~'
-
-"""""""""""""""""""""""""plasticboy/vim-markdown settings"""""""""""""""""""
+"""""""""""""""""""""""""vim-markdown settings"""""""""""""""""""
 " Disable header folding
 let g:vim_markdown_folding_disabled = 1
 
@@ -218,16 +211,20 @@ if exists('g:started_by_firenvim') && g:started_by_firenvim
       \ }
   \ }
 
-  function! s:setup_firenvim() abort
-    set noruler noshowcmd
-    set laststatus=0 showtabline=0
+  function s:setup_firenvim() abort
+    set signcolumn=no
+    set noruler
+    set noshowcmd
+    set laststatus=0
+    set showtabline=0
   endfunction
 
   augroup firenvim
     autocmd!
-    autocmd FileType text call s:setup_firenvim()
-    autocmd BufNewFile github.com_*.txt set filetype=markdown
-    autocmd BufNewFile stackoverflow.com_*.txt set filetype=markdown
+    autocmd BufEnter * call s:setup_firenvim()
+    autocmd BufEnter sqlzoo*.txt set filetype=sql
+    autocmd BufEnter github.com_*.txt set filetype=markdown
+    autocmd BufEnter stackoverflow.com_*.txt set filetype=markdown
   augroup END
 endif
 

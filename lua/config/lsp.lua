@@ -2,43 +2,49 @@ local fn = vim.fn
 local api = vim.api
 local keymap = vim.keymap
 local lsp = vim.lsp
+local diagnostic = vim.diagnostic
 
 local utils = require("utils")
 
 local custom_attach = function(client, bufnr)
   -- Mappings.
-  local opts = { silent = true, buffer = bufnr }
-  keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-  keymap.set("n", "<C-]>", vim.lsp.buf.definition, opts)
-  keymap.set("n", "K", vim.lsp.buf.hover, opts)
-  keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts)
-  keymap.set("n", "<space>rn", vim.lsp.buf.rename, opts)
-  keymap.set("n", "gr", vim.lsp.buf.references, opts)
-  keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
-  keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
-  keymap.set("n", "<space>q", function() vim.diagnostic.setqflist({open = true}) end, opts)
-  keymap.set("n", "<space>ca", vim.lsp.buf.code_action, opts)
-  keymap.set("n", "<space>wa", vim.lsp.buf.add_workspace_folder, opts)
-  keymap.set("n", "<space>wr", vim.lsp.buf.remove_workspace_folder, opts)
-  keymap.set("n", "<space>wl", function() inspect(vim.lsp.buf.list_workspace_folders()) end, opts)
+  local map = function(mode, l, r, opts)
+    opts = opts or {}
+    opts.silent = true
+    opts.buffer = bufnr
+    keymap.set(mode, l, r, opts)
+  end
+
+  map("n", "gd", vim.lsp.buf.definition, { desc = "go to definition" })
+  map("n", "<C-]>", vim.lsp.buf.definition)
+  map("n", "K", vim.lsp.buf.hover)
+  map("n", "<C-k>", vim.lsp.buf.signature_help)
+  map("n", "<space>rn", vim.lsp.buf.rename, { desc = "varialbe rename" })
+  map("n", "gr", vim.lsp.buf.references, { desc = "show references" })
+  map("n", "[d", diagnostic.goto_prev, { desc = "previous diagnostic" })
+  map("n", "]d", diagnostic.goto_next, { desc = "next diagnostic" })
+  map("n", "<space>q", diagnostic.setqflist, { desc = "put diagnostic to qf" })
+  map("n", "<space>ca", vim.lsp.buf.code_action, { desc = "LSP code action" })
+  map("n", "<space>wa", vim.lsp.buf.add_workspace_folder, { desc = "add workspace folder" })
+  map("n", "<space>wr", vim.lsp.buf.remove_workspace_folder, { desc = "remove workspace folder" })
+  map("n", "<space>wl", function()
+    inspect(vim.lsp.buf.list_workspace_folders())
+  end, { desc = "list workspace folder" })
 
   -- Set some key bindings conditional on server capabilities
-  if client.resolved_capabilities.document_formatting then
-    keymap.set("n", "<space>f", vim.lsp.buf.formatting_sync, opts)
-  end
-  if client.resolved_capabilities.document_range_formatting then
-    keymap.set("x", "<space>f", vim.lsp.buf.range_formatting, opts)
+  if client.server_capabilities.documentFormattingProvider then
+    map("n", "<space>f", vim.lsp.buf.format, { desc = "format code" })
   end
 
   api.nvim_create_autocmd("CursorHold", {
-    buffer=bufnr,
+    buffer = bufnr,
     callback = function()
       local float_opts = {
         focusable = false,
         close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
-        border = 'rounded',
-        source = 'always',  -- show source in diagnostic popup window
-        prefix = ' '
+        border = "rounded",
+        source = "always", -- show source in diagnostic popup window
+        prefix = " ",
       }
 
       if not vim.b.diagnostics_pos then
@@ -46,44 +52,54 @@ local custom_attach = function(client, bufnr)
       end
 
       local cursor_pos = api.nvim_win_get_cursor(0)
-      if (cursor_pos[1] ~= vim.b.diagnostics_pos[1] or cursor_pos[2] ~= vim.b.diagnostics_pos[2]) and
-        #vim.diagnostic.get() > 0
+      if (cursor_pos[1] ~= vim.b.diagnostics_pos[1] or cursor_pos[2] ~= vim.b.diagnostics_pos[2])
+          and #diagnostic.get() > 0
       then
-          vim.diagnostic.open_float(nil, float_opts)
+        diagnostic.open_float(nil, float_opts)
       end
 
       vim.b.diagnostics_pos = cursor_pos
-    end
+    end,
   })
 
   -- The blow command will highlight the current variable and its usages in the buffer.
-  if client.resolved_capabilities.document_highlight then
+  if client.server_capabilities.documentHighlightProvider then
     vim.cmd([[
       hi! link LspReferenceRead Visual
       hi! link LspReferenceText Visual
       hi! link LspReferenceWrite Visual
-      augroup lsp_document_highlight
-        autocmd! * <buffer>
-        autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-        autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-      augroup END
     ]])
+
+    local gid = api.nvim_create_augroup("lsp_document_highlight", { clear = true })
+    api.nvim_create_autocmd("CursorHold" , {
+      group = gid,
+      buffer = bufnr,
+      callback = function ()
+        lsp.buf.document_highlight()
+      end
+    })
+
+    api.nvim_create_autocmd("CursorMoved" , {
+      group = gid,
+      buffer = bufnr,
+      callback = function ()
+        lsp.buf.clear_references()
+      end
+    })
   end
 
-  if vim.g.logging_level == 'debug' then
+  if vim.g.logging_level == "debug" then
     local msg = string.format("Language server %s started!", client.name)
-    vim.notify(msg, vim.log.levels.DEBUG, {title = 'Nvim-config'})
+    vim.notify(msg, vim.log.levels.DEBUG, { title = "Nvim-config" })
   end
 end
 
-local capabilities = lsp.protocol.make_client_capabilities()
-capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
-capabilities.textDocument.completion.completionItem.snippetSupport = true
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 local lspconfig = require("lspconfig")
 
-if utils.executable('pylsp') then
-  lspconfig.pylsp.setup({
+if utils.executable("pylsp") then
+  lspconfig.pylsp.setup {
     on_attach = custom_attach,
     settings = {
       pylsp = {
@@ -101,9 +117,9 @@ if utils.executable('pylsp') then
       debounce_text_changes = 200,
     },
     capabilities = capabilities,
-  })
+  }
 else
-  vim.notify("pylsp not found!", vim.log.levels.WARN, {title = 'Nvim-config'})
+  vim.notify("pylsp not found!", vim.log.levels.WARN, { title = "Nvim-config" })
 end
 
 -- if utils.executable('pyright') then
@@ -115,43 +131,43 @@ end
 --   vim.notify("pyright not found!", vim.log.levels.WARN, {title = 'Nvim-config'})
 -- end
 
-if utils.executable('clangd') then
-  lspconfig.clangd.setup({
+if utils.executable("clangd") then
+  lspconfig.clangd.setup {
     on_attach = custom_attach,
     capabilities = capabilities,
     filetypes = { "c", "cpp", "cc" },
     flags = {
       debounce_text_changes = 500,
     },
-  })
+  }
 else
-  vim.notify("clangd not found!", vim.log.levels.WARN, {title = 'Nvim-config'})
+  vim.notify("clangd not found!", vim.log.levels.WARN, { title = "Nvim-config" })
 end
 
 -- set up vim-language-server
-if utils.executable('vim-language-server') then
-  lspconfig.vimls.setup({
+if utils.executable("vim-language-server") then
+  lspconfig.vimls.setup {
     on_attach = custom_attach,
     flags = {
       debounce_text_changes = 500,
     },
     capabilities = capabilities,
-  })
+  }
 else
-  vim.notify("vim-language-server not found!", vim.log.levels.WARN, {title = 'Nvim-config'})
+  vim.notify("vim-language-server not found!", vim.log.levels.WARN, { title = "Nvim-config" })
 end
 
 -- set up bash-language-server
-if utils.executable('bash-language-server') then
-  lspconfig.bashls.setup({
+if utils.executable("bash-language-server") then
+  lspconfig.bashls.setup {
     on_attach = custom_attach,
     capabilities = capabilities,
-  })
+  }
 end
 
 if utils.executable("lua-language-server") then
   -- settings for lua-language-server can be found on https://github.com/sumneko/lua-language-server/wiki/Settings .
-  lspconfig.sumneko_lua.setup({
+  lspconfig.sumneko_lua.setup {
     on_attach = custom_attach,
     settings = {
       Lua = {
@@ -168,8 +184,8 @@ if utils.executable("lua-language-server") then
           -- see also https://github.com/sumneko/lua-language-server/wiki/Libraries#link-to-workspace .
           -- Lua-dev.nvim also has similar settings for sumneko lua, https://github.com/folke/lua-dev.nvim/blob/main/lua/lua-dev/sumneko.lua .
           library = {
-            fn.stdpath('data') .. "/site/pack/packer/opt/emmylua-nvim",
-            fn.stdpath('config'),
+            fn.stdpath("data") .. "/site/pack/packer/opt/emmylua-nvim",
+            fn.stdpath("config"),
           },
           maxPreload = 2000,
           preloadFileSize = 50000,
@@ -177,7 +193,7 @@ if utils.executable("lua-language-server") then
       },
     },
     capabilities = capabilities,
-  })
+  }
 end
 
 -- Change diagnostic signs.
@@ -187,12 +203,12 @@ fn.sign_define("DiagnosticSignInformation", { text = "", texthl = "Diagnostic
 fn.sign_define("DiagnosticSignHint", { text = "", texthl = "DiagnosticSignHint" })
 
 -- global config for diagnostic
-vim.diagnostic.config({
+diagnostic.config {
   underline = false,
   virtual_text = false,
   signs = true,
   severity_sort = true,
-})
+}
 
 -- lsp.handlers["textDocument/publishDiagnostics"] = lsp.with(lsp.diagnostic.on_publish_diagnostics, {
 --   underline = false,
