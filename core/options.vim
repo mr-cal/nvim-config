@@ -177,5 +177,5 @@ set diffopt+=closeoff  " turn off diff when one file window is closed
 set diffopt+=context:5  " context for diff
 set diffopt+=internal,indent-heuristic,algorithm:histogram
 
-set nowrap  " do no wrap
+set wrap
 set noruler
