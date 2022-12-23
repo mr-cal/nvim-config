@@ -8,6 +8,7 @@ local function spell()
   return ""
 end
 
+--- show indicator for Chinese IME
 local function ime_state()
   return ""
 end

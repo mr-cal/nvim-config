@@ -1,4 +1,4 @@
---- This module will load a random colorscheme on nvim startup process.
+<C-S-Insert>--- This module will load a random colorscheme on nvim startup process.
 
 local utils = require("utils")
 

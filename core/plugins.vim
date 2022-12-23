@@ -120,7 +120,6 @@ let g:mundo_width = 80
 
 nnoremap <silent> <Space>u :MundoToggle<CR>
 
-
 """"""""""""""""""""""""""""better-escape.vim settings"""""""""""""""""""""""""
 let g:better_escape_interval = 200
 

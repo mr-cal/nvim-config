@@ -1,5 +1,7 @@
-local utils = require("utils")
+local api = vim.api
 local fn = vim.fn
+
+local utils = require("utils")
 
 -- The root dir to install all plugins. Plugins are under opt/ or start/ sub-directory.
 vim.g.plugin_home = fn.stdpath("data") .. "/site/pack/packer"
@@ -25,7 +27,6 @@ local function packer_ensure_install()
 
   return true
 end
-
 
 local fresh_install = packer_ensure_install()
 
@@ -173,6 +174,15 @@ packer.startup {
     -- Show undo history visually
     use { "simnalamburt/vim-mundo", cmd = { "MundoToggle", "MundoShow" } }
 
+    -- better UI for some nvim actions
+    use {'stevearc/dressing.nvim'}
+
+    -- Manage your yank history
+    use({
+      "gbprod/yanky.nvim",
+      config = [[require('config.yanky')]]
+    })
+
     -- Handy unix command inside Vim (Rename, Move etc.)
     use { "tpope/vim-eunuch", cmd = { "Rename", "Delete" } }
 
@@ -237,17 +247,6 @@ packer.startup {
     -- Modern matchit implementation
     use { "andymass/vim-matchup", event = "VimEnter" }
 
-    -- Smoothie motions
-    use {
-      "karb94/neoscroll.nvim",
-      event = "VimEnter",
-      config = function()
-        vim.defer_fn(function()
-          require("config.neoscroll")
-        end, 2000)
-      end,
-    }
-
     use { "tpope/vim-scriptease", cmd = { "Scriptnames", "Message", "Verbose" } }
 
     -- Asynchronous command execution
@@ -308,3 +307,15 @@ else
     vim.notify(msg, vim.log.levels.ERROR, { title = "nvim-config" })
   end
 end
+
+-- Auto-generate packer_compiled.lua file
+api.nvim_create_autocmd({ "BufWritePost" }, {
+  pattern = "*/nvim/lua/plugins.lua",
+  group = api.nvim_create_augroup("packer_auto_compile", { clear = true }),
+  callback = function(ctx)
+    local cmd = "source " .. ctx.file
+    vim.cmd(cmd)
+    vim.cmd("PackerCompile")
+    vim.notify("PackerCompile done!", vim.log.levels.INFO, { title = "Nvim-config" })
+  end,
+})
