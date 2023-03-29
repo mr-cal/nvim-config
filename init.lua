@@ -1,8 +1,23 @@
+<<<<<<< HEAD
+=======
+-- This is my personal Nvim configuration supporting Mac, Linux and Windows, with various plugins configured.
+-- This configuration evolves as I learn more about Nvim and become more proficient in using Nvim.
+-- Since it is very long (more than 1000 lines!), you should read it carefully and take only the settings that suit you.
+-- I would not recommend cloning this repo and replace your own config. Good configurations are personal,
+-- built over time with a lot of polish.
+--
+-- Author: Jiedong Hao
+-- Email: jdhao@hotmail.com
+-- Blog: https://jdhao.github.io/
+-- GitHub: https://github.com/jdhao
+-- StackOverflow: https://stackoverflow.com/users/6064933/jdhao
+
+>>>>>>> jdhao/master
 local api = vim.api
 local utils = require("utils")
 
 -- check if we have the latest stable version of nvim
-local expected_ver = "0.8.1"
+local expected_ver = "0.8.3"
 local nvim_ver = utils.get_nvim_version()
 
 if nvim_ver ~= expected_ver then
