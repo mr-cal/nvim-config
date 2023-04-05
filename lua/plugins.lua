@@ -147,7 +147,10 @@ packer.startup {
       end,
     }
 
-    use({ 'simrat39/symbols-outline.nvim' })
+    use {
+      "simrat39/symbols-outline.nvim",
+      config = [[require('symbols-outline').setup()]],
+    }
 
     -- Only install these plugins if ctags are installed on the system
     if utils.executable("ctags") then
