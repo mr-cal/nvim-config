@@ -107,7 +107,7 @@ packer.startup {
     -- colorscheme / themes
     use({ "lifepillar/vim-gruvbox8", opt = true })
 
-    use { "kyazdani42/nvim-web-devicons", event = "VimEnter" }
+    use { "nvim-tree/nvim-web-devicons", event = "VimEnter" }
 
     -- footer/bottom bar (like vim-airline)
     use {
