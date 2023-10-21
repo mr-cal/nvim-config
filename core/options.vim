@@ -82,7 +82,7 @@ set fileformats=unix,dos  " Fileformats to use for new files
 set confirm
 
 set visualbell noerrorbells  " Do not use visual and errorbells
-set history=500  " The number of command and search history to keep
+set history=10000  " The number of command and search history to keep
 
 " Use list mode and customized listchars
 set list listchars=tab:▸\ ,extends:❯,precedes:❮,nbsp:␣
@@ -170,9 +170,9 @@ set diffopt=
 set diffopt+=vertical  " show diff in vertical position
 set diffopt+=filler  " show filler for deleted lines
 set diffopt+=closeoff  " turn off diff when one file window is closed
-set diffopt+=context:3  " context for diff
+set diffopt+=context:5  " context for diff
 set diffopt+=internal,indent-heuristic,algorithm:histogram
 set diffopt+=linematch:60
 
-set nowrap  " do no wrap
+set wrap  " do no wrap
 set noruler

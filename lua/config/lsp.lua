@@ -134,7 +134,7 @@ if utils.executable("pylsp") then
           yapf = { enabled = false },
           -- linter options
           pylint = { enabled = true, executable = "pylint" },
-          ruff = { enabled = false },
+          ruff = { enabled = true },
           pyflakes = { enabled = false },
           pycodestyle = { enabled = false },
           -- type checker
