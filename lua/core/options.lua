@@ -1,17 +1,23 @@
-local opts = {
-	shiftwidth = 4,
-	tabstop = 4,
-	expandtab = true,
-	wrap = true,
-	termguicolors = true,
-	number = true,
-	relativenumber = true,
-}
+-- style
+vim.opt.colorcolumn = "88"
+vim.opt.expandtab = true
+vim.opt.number = true
+vim.opt.relativenumber = true
+vim.opt.shiftwidth = 4
+vim.opt.softtabstop = 4
+vim.opt.tabstop = 4
+vim.opt.termguicolors = true
+vim.opt.wrap = true
 
--- Set options from table
-for opt, val in pairs(opts) do
-	vim.o[opt] = val
-end
+-- autosave
+vim.g.auto_save = 1
+
+-- clipboard
+vim.api.nvim_set_option("clipboard", "unnamedplus")
+
+-- Set python interpreter
+vim.g.logging_level = "trace"
+vim.g.python3_host_prog = vim.fn.exepath("/home/developer/.venv/nvim/bin/python3")
 
 -- colorscheme / theme
 vim.g.gruvbox_material_foreground = "material"

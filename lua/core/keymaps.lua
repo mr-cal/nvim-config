@@ -24,3 +24,11 @@ map("n", "<S-h>", ":bprevious<CR>", "Go to previous buffer")
 
 -- clear highlight after search
 map("n", "<leader>ur", "<cmd>nohl<cr>", "Clear highlights")
+
+vim.keymap.set({ "n", "v" }, "<leader>gl", function()
+  local mode = string.lower(vim.fn.mode())
+  require("gitlinker").get_buf_range_url(mode)
+end, {
+  silent = true,
+  desc = "get git permlink",
+})

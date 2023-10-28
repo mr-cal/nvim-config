@@ -8,7 +8,7 @@ require("core.keymaps")
 require("core.options")
 
 -- local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
--- 
+--
 -- if not vim.loop.fs_stat(lazypath) then
 --   vim.fn.system({
 --     "git",
@@ -20,9 +20,8 @@ require("core.options")
 --   })
 -- end
 -- vim.opt.rtp:prepend(lazypath)
--- 
+--
 -- require("lazy").setup(plugins, opts)
-
 
 -- foreground option can be material, mix, or original
 -- vim.g.gruvbox_material_foreground = "material"
@@ -31,5 +30,5 @@ require("core.options")
 -- vim.g.gruvbox_material_enable_italic = 1
 -- vim.g.gruvbox_material_enable_bold = 1
 -- vim.g.gruvbox_material_better_performance = 1
--- 
+--
 -- vim.cmd([[colorscheme gruvbox-material]])

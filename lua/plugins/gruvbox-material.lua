@@ -1,6 +1,6 @@
 return {
-	{
-		"sainnhe/gruvbox-material",
-		opts = {},
-	},
+  {
+    "sainnhe/gruvbox-material",
+    opts = {},
+  },
 }
