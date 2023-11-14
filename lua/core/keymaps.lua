@@ -25,6 +25,9 @@ map("n", "<S-h>", ":bprevious<CR>", "Go to previous buffer")
 -- clear highlight after search
 map("n", "<leader>ur", "<cmd>nohl<cr>", "Clear highlights")
 
+map("n", "/", [[/\c]], "Case insenstive search")
+
+
 vim.keymap.set({ "n", "v" }, "<leader>gl", function()
   local mode = string.lower(vim.fn.mode())
   require("gitlinker").get_buf_range_url(mode)
